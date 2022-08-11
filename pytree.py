@@ -1,57 +1,48 @@
-#!/Library/Frameworks/Python.framework/Versions/3.10/bin/python3
-import sys, os
+#!/usr/bin/env python3
 
-hidden_files = False
+import subprocess, os, sys, colorama
+from pynput import Key, HotKey, KeyCode, Listener
 
-def parse(cmd: str, current_dir:str):
-    if cmd == "h":
-        hidden_files = True
-    if cmd == "q":
-        exit(0)
+class Directory():
+    def __init__(self, name: str, collapsed: bool) -> None:
+        self.name = name
+        self.is_collapsed = collapsed
+
+    def __repr__(self) -> str:
+        if self.is_collapsed:
+            return f"{colorama.Fore.GREEN}\033[1m[D]→ {self.name}\033[0m"
+        else:
+            return f"{colorama.Fore.GREEN}\033[1m[D]↓ {self.name}\033[0m"
+
+class File():
+    def __init__(self, name: str, can_exec: bool) -> None:
+        self.name = name
+        self.is_executable = can_exec
+
+    def __repr__(self) -> str:
+        if is_executable:
+            return f"{colorama.Fore.YELLOW}\033[1m[F]* {self.name}\033[0m"
+        else:
+            return f"{colorama.Fore.YELLOW}\033[1m[F]  {self.name}\033[0m"
+
+def format_entry_as_class(current_dir: str, file_name: str):
+    if os.isfile(os.path.join(current_dir, file_name)):
+        if os.access(os.path.join(current_dir, file_name), os.X_OK):
+            return File(name=file_name, can_exec=True)
+        else:
+            return FIle(name=file_name, can_exec=False)
+
+
+def load():
+    return []
+
+def main():
+    should_close = False
+    dir_classes = []
+    selection_ptr: int = 0
+
+    while not should_close:
+        pass
     
-def load_dir(current_dir: str) -> str:
-    retval = ""
-    for listing in load_folder(current_dir):
-        if os.path.isdir(os.path.join(current_dir, listing)):
-            retval += format_entry_dir("collapsed",listing) + "\n"
-        elif os.path.isfile(os.path.join(current_dir, listing)):
-            retval += format_entry_file(listing) + "\n"
-
-    return retval
-
-def display_dir(current_dir: str):
-    print(load_dir(current_dir))
-
-def format_entry_dir(mode: str, dirname: str) -> str:
-    if mode == "collapsed":
-        return "→ " + dirname
-    elif mode == "":
-        return "↓ " + dirname
-
-def format_entry_file(filename: str) -> str:
-    return "- " + filename
-
-def load_folder(path: str) -> list[str]:
-    return os.listdir(path)
-
-def get_header() -> str:
-    return "PyTree ([h] for hidden files, [q] for quit)\n"
-
-def main() -> int:
-
-    while True:
-        try:
-            if os.path.exists(os.path.dirname(sys.argv[1])):
-                current_dir = sys.argv[1]
-            else:
-                print("not a valid directory! please enter a valid path. defaulting to current path.")
-                raise IndexError
-        except IndexError:
-            current_dir = "./"
-
-        print(get_header())
-        display_dir(current_dir)
-        parse(input("command: "), current_dir)
-        os.system("clear")
 if __name__ == "__main__":
-    exit(main())
+    main()
