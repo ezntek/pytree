@@ -35,6 +35,24 @@ def format_entry_as_class(current_dir: str, file_name: str):
     elif os.path.isdir(os.path.join(current_dir, file_name)):
         return Directory(name=file_name, collapsed=True)
 
+class UseStateInt():
+    def __init__(self, val: int, lower_bound: int, higher_bound: int) -> None:
+        self.value = val
+        self.bounds = [lower_bound, higher_bound]
+
+    def get(self) -> int:
+        return self.value
+    
+    def incr(self):
+        if self.value + 1 in range(self.bounds[0], self.bounds[1]):
+            self.value += 1
+        else:
+            self.value = self.bounds[0]
+    def decr(self):
+        if self.value - 1 in range(self.bounds[0], self.bounds[1]):
+            self.value -= 1
+        else:
+            self.value = self.bounds[1]
 
 def load(current_dir: str):
     return [format_entry_as_class(current_dir,listing) for listing in os.listdir()]
@@ -62,6 +80,14 @@ def main():
     def hotkey_q():
         sys.exit(0)
 
+    def hotkey_up():
+        nonlocal selection_ptr
+        selection_ptr -= 1
+
+    def hotkey_down():
+        nonlocal selection_ptr
+        selection_ptr += 1
+
     hotkeys = [
         keyboard.HotKey(
             [keyboard.KeyCode(char='r')],
@@ -70,6 +96,14 @@ def main():
         keyboard.HotKey(
             [keyboard.KeyCode(char='q')],
             hotkey_q,
+        ),
+        keyboard.HotKey(
+            [keyboard.KeyCode(char="[")],
+            hotkey_up,
+        ),
+        keyboard.HotKey(
+            [keyboard.KeyCode(char="]")],
+            hotkey_down,
         ),
     ]
 
